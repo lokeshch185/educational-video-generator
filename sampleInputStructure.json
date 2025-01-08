@@ -1,0 +1,347 @@
+{
+    "type": "object",
+    "properties": {
+      "presentation": {
+        "type": "object",
+        "properties": {
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "author": { "type": "string" },
+              "subject": { "type": "string" },
+              "keywords": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "slideWidth": { "type": "number" },
+              "slideHeight": { "type": "number" },
+              "theme": { "type": "string" }
+            }
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "slides": { "type": "array", "items": { "$ref": "#/definitions/slide" } }
+              }
+            }
+          },
+          "slides": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/slide" }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "slide": {
+        "type": "object",
+        "properties": {
+          "layout": { "type": "string" },
+          "background": {
+            "type": "object",
+            "properties": {
+              "type": { "enum": ["solid", "gradient", "picture"] },
+              "color": { "type": "string" },
+              "gradientStops": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "position": { "type": "number" },
+                    "color": { "type": "string" }
+                  }
+                }
+              },
+              "imagePath": { "type": "string" }
+            }
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "oneOf": [
+                { "$ref": "#/definitions/shape" },
+                { "$ref": "#/definitions/text" },
+                { "$ref": "#/definitions/picture" },
+                { "$ref": "#/definitions/chart" },
+                { "$ref": "#/definitions/table" }
+              ]
+            }
+          },
+          "notes": { "type": "string" },
+          "transition": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "duration": { "type": "number" }
+            }
+          }
+        }
+      },
+      "position": {
+        "type": "object",
+        "properties": {
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "width": { "type": "number" },
+          "height": { "type": "number" },
+          "rotation": { "type": "number" }
+        }
+      },
+      "shape": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "position": { "$ref": "#/definitions/position" },
+          "style": {
+            "type": "object",
+            "properties": {
+              "fill": {
+                "type": "object",
+                "properties": {
+                  "type": { "enum": ["solid", "gradient", "pattern", "picture"] },
+                  "color": { "type": "string" },
+                  "transparency": { "type": "number" }
+                }
+              },
+              "line": {
+                "type": "object",
+                "properties": {
+                  "color": { "type": "string" },
+                  "width": { "type": "number" },
+                  "style": { "type": "string" },
+                  "dashStyle": { "type": "string" }
+                }
+              },
+              "shadow": {
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string" },
+                  "color": { "type": "string" },
+                  "blur": { "type": "number" },
+                  "angle": { "type": "number" },
+                  "distance": { "type": "number" }
+                }
+              }
+            }
+          },
+          "animation": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "trigger": { "type": "string" },
+              "duration": { "type": "number" },
+              "delay": { "type": "number" }
+            }
+          }
+        }
+      },
+      "text": {
+        "type": "object",
+        "properties": {
+          "type": { "enum": ["text", "title", "subtitle", "body"] },
+          "position": { "$ref": "#/definitions/position" },
+          "content": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": { "type": "string" },
+                "style": {
+                  "type": "object",
+                  "properties": {
+                    "font": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string" },
+                        "size": { "type": "number" },
+                        "bold": { "type": "boolean" },
+                        "italic": { "type": "boolean" },
+                        "underline": { "type": "boolean" },
+                        "color": { "type": "string" }
+                      }
+                    },
+                    "paragraph": {
+                      "type": "object",
+                      "properties": {
+                        "alignment": { "type": "string" },
+                        "lineSpacing": { "type": "number" },
+                        "spaceBefore": { "type": "number" },
+                        "spaceAfter": { "type": "number" },
+                        "bullet": {
+                          "type": "object",
+                          "properties": {
+                            "type": { "type": "string" },
+                            "style": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "picture": {
+        "type": "object",
+        "properties": {
+          "type": { "enum": ["picture"] },
+          "position": { "$ref": "#/definitions/position" },
+          "path": { "type": "string" },
+          "crop": {
+            "type": "object",
+            "properties": {
+              "left": { "type": "number" },
+              "top": { "type": "number" },
+              "right": { "type": "number" },
+              "bottom": { "type": "number" }
+            }
+          },
+          "style": {
+            "type": "object",
+            "properties": {
+              "brightness": { "type": "number" },
+              "contrast": { "type": "number" },
+              "transparency": { "type": "number" },
+              "border": {
+                "type": "object",
+                "properties": {
+                  "width": { "type": "number" },
+                  "color": { "type": "string" },
+                  "style": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "chart": {
+        "type": "object",
+        "properties": {
+          "type": { "enum": ["chart"] },
+          "chartType": { "type": "string" },
+          "position": { "$ref": "#/definitions/position" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "categories": { "type": "array", "items": { "type": "string" } },
+              "series": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "values": { "type": "array", "items": { "type": "number" } }
+                  }
+                }
+              }
+            }
+          },
+          "style": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "hasLegend": { "type": "boolean" },
+              "legendPosition": { "type": "string" },
+              "axes": {
+                "type": "object",
+                "properties": {
+                  "categoryAxis": {
+                    "type": "object",
+                    "properties": {
+                      "title": { "type": "string" },
+                      "gridlines": { "type": "boolean" }
+                    }
+                  },
+                  "valueAxis": {
+                    "type": "object",
+                    "properties": {
+                      "title": { "type": "string" },
+                      "gridlines": { "type": "boolean" },
+                      "min": { "type": "number" },
+                      "max": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "table": {
+        "type": "object",
+        "properties": {
+          "type": { "enum": ["table"] },
+          "position": { "$ref": "#/definitions/position" },
+          "rows": { "type": "number" },
+          "cols": { "type": "number" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "style": {
+            "type": "object",
+            "properties": {
+              "firstRow": { "type": "boolean" },
+              "firstCol": { "type": "boolean" },
+              "lastRow": { "type": "boolean" },
+              "lastCol": { "type": "boolean" },
+              "rowBanding": { "type": "boolean" },
+              "colBanding": { "type": "boolean" },
+              "cells": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "row": { "type": "number" },
+                    "col": { "type": "number" },
+                    "fill": {
+                      "type": "object",
+                      "properties": {
+                        "color": { "type": "string" }
+                      }
+                    },
+                    "border": {
+                      "type": "object",
+                      "properties": {
+                        "width": { "type": "number" },
+                        "color": { "type": "string" },
+                        "style": { "type": "string" }
+                      }
+                    },
+                    "text": {
+                      "type": "object",
+                      "properties": {
+                        "font": {
+                          "type": "object",
+                          "properties": {
+                            "name": { "type": "string" },
+                            "size": { "type": "number" },
+                            "bold": { "type": "boolean" },
+                            "italic": { "type": "boolean" },
+                            "color": { "type": "string" }
+                          }
+                        },
+                        "alignment": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
