@@ -1,0 +1,373 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Machine Learning for Teaching Purpose",
+      "author": "Instructor Name",
+      "subject": "Machine Learning",
+      "keywords": ["Machine Learning", "AI", "Data Science", "Algorithms"]
+    },
+    "settings": {
+      "slideWidth": 16,
+      "slideHeight": 9,
+      "theme": "light"
+    },
+    "sections": [
+      {
+        "name": "Introduction",
+        "slides": [
+          {
+            "layout": "title",
+            "background": {
+              "type": "solid",
+              "color": "#ffffff"
+            },
+            "elements": [
+              {
+                "type": "title",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "Machine Learning for Teaching Purpose",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 44,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "center"
+                      }
+                    }
+                  },
+                  {
+                    "text": "An Introduction to Machine Learning Concepts and Applications",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "center"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "layout": "content",
+            "background": {
+              "type": "solid",
+              "color": "#f9f9f9"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "What is Machine Learning?",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 32,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Machine Learning is a subset of Artificial Intelligence that focuses on building algorithms that allow computers to learn and improve from experience.",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Types of Machine Learning",
+        "slides": [
+          {
+            "layout": "content",
+            "background": {
+              "type": "solid",
+              "color": "#ffffff"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "Types of Machine Learning",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 32,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "center"
+                      }
+                    }
+                  },
+                  {
+                    "text": "1. Supervised Learning\n2. Unsupervised Learning\n3. Reinforcement Learning",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "layout": "content",
+            "background": {
+              "type": "solid",
+              "color": "#f0f0f0"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "Supervised Learning",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 28,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Supervised learning involves training a model using labeled data. The model learns the relationship between the input data and the correct output. Example: Classification algorithms.",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "layout": "content",
+            "background": {
+              "type": "solid",
+              "color": "#ffffff"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "Unsupervised Learning",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 28,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Unsupervised learning involves finding hidden patterns or intrinsic structures in input data that is not labeled. Example: Clustering algorithms.",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "layout": "content",
+            "background": {
+              "type": "solid",
+              "color": "#f0f0f0"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "Reinforcement Learning",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 28,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Reinforcement learning is a type of learning where an agent learns to make decisions by performing actions and receiving feedback from the environment. Example: Game AI, Robotics.",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Applications of Machine Learning",
+        "slides": [
+          {
+            "layout": "content",
+            "background": {
+              "type": "solid",
+              "color": "#ffffff"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "Applications of Machine Learning",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 32,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "center"
+                      }
+                    }
+                  },
+                  {
+                    "text": "Machine Learning is used in various industries, such as healthcare, finance, and entertainment. Examples include:\n- Fraud Detection\n- Autonomous Vehicles\n- Personalized Recommendations",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Key Machine Learning Algorithms",
+        "slides": [
+          {
+            "layout": "content",
+            "background": {
+              "type": "solid",
+              "color": "#f0f0f0"
+            },
+            "elements": [
+              {
+                "type": "text",
+                "position": { "x": 1, "y": 1, "width": 14, "height": 3 },
+                "content": [
+                  {
+                    "text": "Key Machine Learning Algorithms",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 32,
+                        "bold": true,
+                        "color": "#333333"
+                      },
+                      "paragraph": {
+                        "alignment": "center"
+                      }
+                    }
+                  },
+                  {
+                    "text": "1. Decision Trees\n2. Random Forests\n3. Support Vector Machines\n4. K-Nearest Neighbors\n5. Neural Networks",
+                    "style": {
+                      "font": {
+                        "name": "Arial",
+                        "size": 24,
+                        "color": "#555555"
+                      },
+                      "paragraph": {
+                        "alignment": "left"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

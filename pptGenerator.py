@@ -1,120 +1,194 @@
 from pptx import Presentation
-from pptx.util import Pt, Inches, Cm
+from pptx.util import Inches, Pt
+from pptx.enum.text import PP_ALIGN
 from pptx.dml.color import RGBColor
+from pptx.enum.shapes import MSO_SHAPE
+import json
 
-def create_professional_presentation(data, output_file="professional_presentation.pptx"):
-    prs = Presentation()
-    
-    for slide_data in data.get("slides", []):
-        slide_layout_index = slide_data.get("layout", 1)
-        slide_layout = prs.slide_layouts[slide_layout_index]
-        slide = prs.slides.add_slide(slide_layout)
-
-        if "title" in slide_data:
-            title_shape = slide.shapes.title
-            title_shape.text = slide_data["title"]
-            title_font = slide_data.get("title_font", {})
-            title_shape.text_frame.paragraphs[0].font.size = Pt(title_font.get("size", 32))
-            title_shape.text_frame.paragraphs[0].font.bold = title_font.get("bold", False)
-            title_shape.text_frame.paragraphs[0].font.color.rgb = RGBColor(*title_font.get("color", [0, 0, 0]))
-
-        if "content" in slide_data:
-            content_shape = slide.placeholders[1] if len(slide.placeholders) > 1 else None
-            if content_shape:
-                content_shape.text = ""
-                for paragraph in slide_data["content"]:
-                    p = content_shape.text_frame.add_paragraph()
-                    p.text = paragraph.get("text", "")
-                    font = p.font
-                    font.size = Pt(paragraph.get("font_size", 18))
-                    font.bold = paragraph.get("bold", False)
-                    font.color.rgb = RGBColor(*paragraph.get("color", [85, 85, 85]))
-
-        for image_data in slide_data.get("images", []):
-            try:
-                slide.shapes.add_picture(
-                    image_data["path"],
-                    Inches(image_data.get("x", 1)),
-                    Inches(image_data.get("y", 1)),
-                    width=Inches(image_data.get("width", 2)),
-                    height=Inches(image_data.get("height", 2))
-                )
-            except FileNotFoundError:
-                print(f"Image file '{image_data['path']}' not found. Skipping image.")
-
-        for table_data in slide_data.get("tables", []):
-            rows, cols = len(table_data["data"]), len(table_data["data"][0])
-            x, y, width, height = table_data.get("x", 1), table_data.get("y", 1), table_data.get("width", 4), table_data.get("height", 1)
-            table = slide.shapes.add_table(rows, cols, Inches(x), Inches(y), Inches(width), Inches(height)).table
-            
-            for i, col_width in enumerate(table_data.get("col_widths", [])):
-                table.columns[i].width = Inches(col_width)
-
-            for i, row in enumerate(table_data["data"]):
-                for j, cell_text in enumerate(row):
-                    cell = table.cell(i, j)
-                    cell.text = cell_text
-
-        for shape_data in slide_data.get("shapes", []):
-            shape_type = shape_data.get("type", "rectangle").lower()
-            x, y, width, height = shape_data.get("x", 1), shape_data.get("y", 1), shape_data.get("width", 2), shape_data.get("height", 1)
-            fill_color = shape_data.get("color", [255, 255, 255])
-
-            if shape_type == "rectangle":
-                shape = slide.shapes.add_shape(
-                    shape_data.get("shape_id", 1),
-                    Inches(x),
-                    Inches(y),
-                    Inches(width),
-                    Inches(height)
-                )
-                shape.fill.solid()
-                shape.fill.fore_color.rgb = RGBColor(*fill_color)
-
-    prs.save(output_file)
-    print(f"Presentation saved as '{output_file}'.")
-
-presentation_data = {
-    "slides": [
-        {
-            "title": "Welcome to the Presentation",
-            "layout": 0,
-            "title_font": {"size": 36, "bold": True, "color": [0, 102, 204]},
-            "content": [
-                {"text": "This presentation demonstrates advanced features.", "font_size": 18, "bold": False, "color": [0, 0, 0]},
-                {"text": "You can include images, tables, and shapes.", "font_size": 18, "bold": False, "color": [0, 0, 0]}
-            ],
-            "images": [
-                {"path": "path/to/image.jpg", "x": 5, "y": 1, "width": 2, "height": 2}
-            ]
-        },
-        {
-            "title": "Data Table Example",
-            "layout": 1,
-            "tables": [
-                {
-                    "x": 1,
-                    "y": 2,
-                    "width": 6,
-                    "height": 2,
-                    "col_widths": [2, 2, 2],
-                    "data": [
-                        ["Name", "Age", "City"],
-                        ["Alice", "25", "New York"],
-                        ["Bob", "30", "San Francisco"]
-                    ]
-                }
-            ]
-        },
-        {
-            "title": "Shapes Example",
-            "layout": 1,
-            "shapes": [
-                {"type": "rectangle", "x": 1, "y": 1, "width": 2, "height": 1, "color": [0, 255, 0]},
-                {"type": "rectangle", "x": 4, "y": 1, "width": 2, "height": 1, "color": [255, 0, 0]}
-            ]
+class PPTXGenerator:
+    def __init__(self):
+        self.prs = Presentation()
+        
+        self.alignment_map = {
+            "left": PP_ALIGN.LEFT,
+            "center": PP_ALIGN.CENTER,
+            "right": PP_ALIGN.RIGHT,
+            "justify": PP_ALIGN.JUSTIFY
         }
-    ]
-}
+        
+    def hex_to_rgb(self, hex_color):
+        hex_color = hex_color.lstrip('#')
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    
+    def apply_text_style(self, text_frame, content):
+        for item in content:
+            paragraph = text_frame.add_paragraph()
+            run = paragraph.add_run()
+            run.text = item["text"]
+            
+            if "style" in item:
+                style = item["style"]
+                
+                if "font" in style:
+                    font = style["font"]
+                    if "name" in font:
+                        run.font.name = font["name"]
+                    if "size" in font:
+                        run.font.size = Pt(font["size"])
+                    if "bold" in font:
+                        run.font.bold = font["bold"]
+                    if "italic" in font:
+                        run.font.italic = font["italic"]
+                    if "color" in font:
+                        rgb = self.hex_to_rgb(font["color"])
+                        run.font.color.rgb = RGBColor(*rgb)
+                
+                if "paragraph" in style:
+                    para_style = style["paragraph"]
+                    if "alignment" in para_style:
+                        paragraph.alignment = self.alignment_map.get(
+                            para_style["alignment"].lower(),
+                            PP_ALIGN.LEFT
+                        )
+                    if "lineSpacing" in para_style:
+                        paragraph.line_spacing = para_style["lineSpacing"]
+                    if "spaceBefore" in para_style:
+                        paragraph.space_before = Pt(para_style["spaceBefore"])
+                    if "spaceAfter" in para_style:
+                        paragraph.space_after = Pt(para_style["spaceAfter"])
+    
+    def add_shape(self, slide, shape_data):
+        pos = shape_data["position"]
+        shape = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            Inches(pos["x"]),
+            Inches(pos["y"]),
+            Inches(pos["width"]),
+            Inches(pos["height"])
+        )
+        
+        if "style" in shape_data:
+            style = shape_data["style"]
+            if "fill" in style:
+                fill = style["fill"]
+                if "color" in fill:
+                    rgb = self.hex_to_rgb(fill["color"])
+                    shape.fill.solid()
+                    shape.fill.fore_color.rgb = RGBColor(*rgb)
+            
+            if "line" in style:
+                line = style["line"]
+                if "color" in line:
+                    rgb = self.hex_to_rgb(line["color"])
+                    shape.line.color.rgb = RGBColor(*rgb)
+                if "width" in line:
+                    shape.line.width = Pt(line["width"])
+    
+    def add_picture(self, slide, picture_data):
+       
+        pos = picture_data["position"]
+        picture = slide.shapes.add_picture(
+            picture_data["path"],
+            Inches(pos["x"]),
+            Inches(pos["y"]),
+            Inches(pos["width"]),
+            Inches(pos["height"])
+        )
+        
+        if "crop" in picture_data:
+            crop = picture_data["crop"]
+            picture.crop_left = crop.get("left", 0)
+            picture.crop_top = crop.get("top", 0)
+            picture.crop_right = crop.get("right", 0)
+            picture.crop_bottom = crop.get("bottom", 0)
+    
+    def add_table(self, slide, table_data):
+      
+        pos = table_data["position"]
+        rows = table_data["rows"]
+        cols = table_data["cols"]
+        
+        table = slide.shapes.add_table(
+            rows, cols,
+            Inches(pos["x"]),
+            Inches(pos["y"]),
+            Inches(pos["width"]),
+            Inches(pos["height"])
+        ).table
+        
+        for row_idx, row in enumerate(table_data["data"]):
+            for col_idx, cell_text in enumerate(row):
+                cell = table.cell(row_idx, col_idx)
+                cell.text = str(cell_text)
+        
+        if "style" in table_data:
+            style = table_data["style"]
+            if "cells" in style:
+                for cell_style in style["cells"]:
+                    row = cell_style["row"]
+                    col = cell_style["col"]
+                    cell = table.cell(row, col)
+                    
+                    if "fill" in cell_style:
+                        fill = cell_style["fill"]
+                        if "color" in fill:
+                            rgb = self.hex_to_rgb(fill["color"])
+                            cell.fill.solid()
+                            cell.fill.fore_color.rgb = RGBColor(*rgb)
+                    
+                    if "text" in cell_style:
+                        text_frame = cell.text_frame
+                        text_frame.clear()
+                        self.apply_text_style(text_frame, [cell_style["text"]])
 
-create_professional_presentation(presentation_data)
+    def create_slide(self, slide_data):
+        slide = self.prs.slides.add_slide(self.prs.slide_layouts[6])
+        for element in slide_data["elements"]:
+            element_type = element["type"]
+            
+            if element_type == "text":
+                textbox = slide.shapes.add_textbox(
+                    Inches(element["position"]["x"]),
+                    Inches(element["position"]["y"]),
+                    Inches(element["position"]["width"]),
+                    Inches(element["position"]["height"])
+                )
+                self.apply_text_style(textbox.text_frame, element["content"])
+            
+            elif element_type == "shape":
+                self.add_shape(slide, element)
+            
+            elif element_type == "picture":
+                self.add_picture(slide, element)
+            
+            elif element_type == "table":
+                self.add_table(slide, element)
+    
+    def generate_presentation(self, json_data):
+        if "metadata" in json_data["presentation"]:
+            core_properties = self.prs.core_properties
+            metadata = json_data["presentation"]["metadata"]
+            
+            if "title" in metadata:
+                core_properties.title = metadata["title"]
+            if "author" in metadata:
+                core_properties.author = metadata["author"]
+            if "subject" in metadata:
+                core_properties.subject = metadata["subject"]
+        
+        for slide_data in json_data["presentation"]["slides"]:
+            self.create_slide(slide_data)
+    
+    def save(self, filename):
+        self.prs.save(filename)
+
+def create_presentation_from_json(json_file_path, output_pptx_path):
+    with open(json_file_path, 'r') as f:
+        json_data = json.load(f)
+    
+    generator = PPTXGenerator()
+    generator.generate_presentation(json_data)
+    generator.save(output_pptx_path)
+
+if __name__ == "__main__":
+    create_presentation_from_json("ml_presentation.json", "output.pptx")
