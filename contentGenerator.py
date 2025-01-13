@@ -15,20 +15,44 @@ llm = ChatGoogleGenerativeAI(
 response = llm.invoke("hello")
 print(response)
 
-prompt = PromptTemplate(
+slide_titles_prompt = PromptTemplate(
     input_variables=["topic"],
     template=(
-        "Create an educational presentation on '{topic}'. "
-        "Provide slide titles and key points for each slide. Use the following format:\n\n"
-        "Slide 1: Title\n- Point 1\n- Point 2\n\n"
-        "Slide 2: Title\n- Point 1\n- Point 2\n\n"
-    )
+        "Create an outline for an educational presentation on '{topic}'. "
+        "Provide only slide titles as a numbered list."
+    ),
 )
 
-def generate_presentation_content(topic):
-    content = llm(prompt.format(topic=topic))
-    return content
+slide_content_prompt = PromptTemplate(
+    input_variables=["slide_title"],
+    template=(
+        "Provide detailed key points for the slide titled '{slide_title}' in an educational presentation. "
+        "Use bullet points for clarity."
+    ),
+)
+
+def generate_slide_titles(topic):
+    titles_response = llm.invoke(slide_titles_prompt.format(topic=topic))
+    titles = titles_response.split("\n")
+    return [title.strip() for title in titles if title.strip()]
+
+def generate_slide_content(slide_title):
+    content_response = llm.invoke(slide_content_prompt.format(slide_title=slide_title))
+    return content_response.strip()
+
+def generate_presentation(topic):
+    slide_titles = generate_slide_titles(topic)
+    if not slide_titles:
+        return "No slide titles generated."
+    presentation = {}
+    for title in slide_titles:
+        content = generate_slide_content(title)
+        presentation[title] = content
+    return presentation
 
 topic = "Introduction to Machine Learning"
-presentation_content = generate_presentation_content(topic)
-print(presentation_content)
+presentation = generate_presentation(topic)
+
+for slide, content in presentation.items():
+    print(f"Slide: {slide}")
+    print(content)
